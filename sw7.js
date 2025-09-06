@@ -249,10 +249,10 @@ self.addEventListener('install', (event) => {
       
 
       await cache.addAll([
-        "/DeraTeems/izbran.html",
-        "/DeraTeems/index.html",
-        "/DeraTeems/cash.html",
-        "/DeraTeems/script.js",
+        "/PLEASE/izbran.html",
+        "/PLEASE/index.html",
+        "/PLEASE/cash.html",
+        "/PLEASE/script.js",
       ]);
       
 
