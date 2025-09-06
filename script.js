@@ -1159,35 +1159,18 @@ let tracks = [
 
 
 
-
-
-
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then(reg => {
-    console.log('SW зарегистрирован');
-
-    navigator.serviceWorker.addEventListener('message', event => {
-      const data = event.data;
-      if (!data) return;
-
-      if (data.type === 'CACHE_PROGRESS') {
-        updateProgress(data.cachedCount, data.total);
-      } else if (data.type === 'CACHE_COMPLETE') {
-        updateProgress(data.cachedCount, data.total, true);
-      }
-    });
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw7.js') 
+      .then((registration) => {
+        alert('SW зарегистрирован:', registration);
+      })
+      .catch((error) => {
+        console.log('Ошибка регистрации SW:', error);
+      });
   });
-}
-
-function updateProgress(cachedCount, total, done = false) {
-  const progressEl = document.getElementById('cache-progress');
-  if (!progressEl) return;
-
-  if (done) {
-    progressEl.textContent = `Кэширование завершено: ${cachedCount} из ${total} файлов.`;
-  } else {
-    progressEl.textContent = `Загружено ${cachedCount} из ${total} файлов...`;
-  }
+} else {
+   alert('не потдерживается SW')
 }
 
 
