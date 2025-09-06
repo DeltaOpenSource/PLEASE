@@ -231,14 +231,6 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
         try {
           await cache.add(url);
           cachedCount++;
-          clients.forEach(client => {
-          client.postMessage({
-            type: 'CACHE_PROGRESS',
-            cachedCount,
-            total,
-            url,
-          });
-        });
           console.log(`Успешно закэширован (${cachedCount}/${urls.length}): ${url}`);
         } catch (error) {
           console.error(`Ошибка при кэшировании ${url}:`, error);
@@ -246,13 +238,6 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
       })
     );
   }
-  clients.forEach(client => {
-    client.postMessage({
-      type: 'CACHE_COMPLETE',
-      cachedCount,
-      total,
-    });
-  });
   console.log(`Кэширование завершено: ${cachedCount} из ${urls.length} файлов.`);
 }
 
