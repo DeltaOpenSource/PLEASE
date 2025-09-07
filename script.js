@@ -1172,6 +1172,15 @@ if ('serviceWorker' in navigator) {
    alert('не потдерживается SW')
 }
 
+document.getElementById('recache-btn').addEventListener('click', () => {
+  if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ action: 'recache' });
+    console.log('Отправлено сообщение на перезапуск кэширования.');
+  } else {
+    console.log('Service Worker не активен. Попробуйте перезагрузить страницу.');
+  }
+});
+
 
 
 
