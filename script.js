@@ -1167,7 +1167,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
 
-         if (!localStorage.getItem('cacheLoaded')) {
+         if (!localStorage.getItem('ca')) {
           showLoadingIndicator();
         }
          
@@ -1189,7 +1189,7 @@ function showLoadingIndicator() {
  function hideLoadingIndicator() {
   console.log('Скрываем индикатор и сохраняем cacheLoaded');
   document.getElementById('loading-indicator').style.display = 'none';
-  localStorage.setItem('cacheLoaded', 'true');
+  localStorage.setItem('ca', 'true');
 }
 
 
