@@ -296,24 +296,3 @@ self.addEventListener('activate', (event) => {
     }).then(() => self.clients.claim())
   );
 });
-
-
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.action === 'recache') {
-    console.log('[SW] Перезапуск кэширования...');
-    port.postMessage({ action: 'recache-done' });
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        const filteredUrls = urlsToCache.filter(url => !url.startsWith('/Obmen/'));
-        return cacheUrlsInBatches(cache, filteredUrls, 10);
-      })
-      .then(() => {
-        
-        console.log('[SW] Кэширование завершено повторно.');
-      })
-      .catch((error) => {
-        port.postMessage({ action: 'recache-done' });
-        console.error('[SW] Ошибка при повторном кэшировании:', error);
-      });
-  }
-});
