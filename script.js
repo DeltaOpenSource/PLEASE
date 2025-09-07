@@ -1157,26 +1157,12 @@ let tracks = [
   }
 ];
 
-function isLocalStorageAvailable() {
-  try {
-    const testKey = '__test__';
-    localStorage.setItem(testKey, '1');
-    localStorage.removeItem(testKey);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
-
-         if (isLocalStorageAvailable() && !localStorage.getItem('ca')) {
-  showLoadingIndicator();
-}
-         
+         console.log('успех')
       })
       .catch((error) => {
         console.log('Ошибка регистрации SW:', error);
@@ -1186,28 +1172,7 @@ if ('serviceWorker' in navigator) {
    alert('не потдерживается SW')
 }
 
-function showLoadingIndicator() {
-  const indicator = document.getElementById('loading-indicator');
-  indicator.style.display = 'block';
-}
 
-
-function hideLoadingIndicator() {
-  document.getElementById('loading-indicator').style.display = 'none';
-  if (isLocalStorageAvailable()) {
-    localStorage.setItem('ca', 'true');
-  }
-}
-
-
-navigator.serviceWorker.addEventListener('message', (event) => {
-  if (event.data.type === 'cache-progress') {
-    const progressBar = document.getElementById('progress-bar');
-    progressBar.value += 1;
-  } else if (event.data.type === 'cache-complete') {
-    hideLoadingIndicator();
-  }
-});
 
 
 
