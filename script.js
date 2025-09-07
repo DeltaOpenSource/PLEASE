@@ -1163,6 +1163,11 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
          console.log('успех')
+
+         if (!navigator.serviceWorker.controller) {
+        window.location.reload(); 
+      }
+         
       })
       .catch((error) => {
         console.log('Ошибка регистрации SW:', error);
