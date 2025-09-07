@@ -1157,19 +1157,25 @@ let tracks = [
   }
 ];
 
-const indicator = document.getElementById('loading-indicator');
-  indicator.style.display = 'none';
-
-
+function isLocalStorageAvailable() {
+  try {
+    const testKey = '__test__';
+    localStorage.setItem(testKey, '1');
+    localStorage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
 
-         if (!localStorage.getItem('ca')) {
-          showLoadingIndicator();
-        }
+         if (isLocalStorageAvailable() && !localStorage.getItem('ca')) {
+  showLoadingIndicator();
+}
          
       })
       .catch((error) => {
@@ -1186,10 +1192,11 @@ function showLoadingIndicator() {
 }
 
 
- function hideLoadingIndicator() {
-  console.log('Скрываем индикатор и сохраняем cacheLoaded');
+function hideLoadingIndicator() {
   document.getElementById('loading-indicator').style.display = 'none';
-  localStorage.setItem('ca', 'true');
+  if (isLocalStorageAvailable()) {
+    localStorage.setItem('ca', 'true');
+  }
 }
 
 
