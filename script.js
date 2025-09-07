@@ -1177,21 +1177,8 @@ document.getElementById('recache-btn').addEventListener('click', () => {
   const loadingIndicator = document.getElementById('loading-indicator');
   const progressBar = document.getElementById('progress-bar');
   loadingIndicator.style.display = 'block';
-  progressBar.value = 0; 
 
-  // Создаем канал для общения с SW
-  const channel = new MessageChannel();
-  channel.port1.onmessage = (event) => {
-    if (event.data.action === 'progress') {
-
-      progressBar.value = event.data.value;
-    } else if (event.data.action === 'recache-done') {
-
-      loadingIndicator.style.display = 'none';
-    }
-  };
-
-  navigator.serviceWorker.controller.postMessage({ action: 'recache' }, [channel.port2]);
+  navigator.serviceWorker.controller.postMessage({ action: 'recache' });
 });
 
 
