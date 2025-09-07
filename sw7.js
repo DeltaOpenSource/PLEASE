@@ -294,3 +294,20 @@ self.addEventListener('activate', (event) => {
     }).then(() => self.clients.claim())
   );
 });
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'recache') {
+    event.waitUntil(
+      (async () => {
+        const cache = await caches.open(CACHE_NAME);
+        try {
+          await cacheUrlsInBatches(cache, urlsToCache, 10);
+          event.source.postMessage({ status: 'recache-complete' });
+        } catch (error) {
+          event.source.postMessage({ status: 'recache-failed', error: error.toString() });
+        }
+      })()
+    );
+  }
+});
+
