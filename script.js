@@ -1163,9 +1163,8 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
-        alert('SW зарегистрирован:', registration);
 
-         if (!localStorage.getItem('cacheLoaded')) {
+         if (!localStorage.getItem('cacheLoaded') === "нет") {
           showLoadingIndicator();
         }
          
@@ -1187,7 +1186,7 @@ function showLoadingIndicator() {
 function hideLoadingIndicator() {
   const indicator = document.getElementById('loading-indicator');
   indicator.style.display = 'none';
-  localStorage.setItem('cacheLoaded', 'true'); 
+  localStorage.setItem('cacheLoaded', 'нет'); 
 }
 
 navigator.serviceWorker.addEventListener('message', (event) => {
