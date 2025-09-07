@@ -1160,23 +1160,23 @@ let tracks = [
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw7.js') 
-      .then((registration) => {
-         console.log('успех')
-
-         if (!navigator.serviceWorker.controller) {
-        window.location.reload(); 
+    navigator.serviceWorker.register('sw7.js').then(registration => {
+      console.log('SW зарегистрирован');
+      if (!navigator.serviceWorker.controller) {
+        window.location.reload();
+      } else {
+        UpdateFunction();
       }
-         
-      })
-      .catch((error) => {
-        console.log('Ошибка регистрации SW:', error);
-      });
+    }).catch(error => {
+      console.error('Ошибка регистрации SW:', error);
+      UpdateFunction(); 
+    });
   });
 } else {
-   alert('не потдерживается SW')
-   UpdateFunction()
+  console.log('SW не поддерживается');
+  UpdateFunction(); 
 }
+
 
 document.getElementById('recache-btn').addEventListener('click', () => {
 
