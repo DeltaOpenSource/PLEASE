@@ -13,6 +13,8 @@
   <title>Избранные треки</title>
 
   <style>
+
+    
 body {
       margin: 0;
       background-color: #363E6B;
@@ -88,6 +90,26 @@ body {
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+
+     #loading-indicator {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      z-index: 1000;
+    }
+
+    #progress-bar {
+      width: 100%;
+      margin-top: 10px;
     }
 
     .num-btn:hover {
@@ -662,6 +684,13 @@ body {
     <div id="favorites-container" tabindex="0" aria-live="polite" aria-relevant="additions"></div>
     <audio id="audio-player" controls preload="none" controlsList="nodownload" aria-label="Аудиоплеер для избранных треков"></audio>
   </section>
+
+  <div id="loading-indicator">
+    <p>Загрузка файлов в кэш...</p>
+    <progress id="progress-bar" value="0" max="300"></progress>
+    <button id="reload-cache-button">Повторить загрузку</button>
+  </div>
+  
 <script src="script.js"></script>
 </body>
 </html>
