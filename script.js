@@ -1157,6 +1157,9 @@ let tracks = [
   }
 ];
 
+const indicator = document.getElementById('loading-indicator');
+  indicator.style.display = 'none';
+
 
 
 if ('serviceWorker' in navigator) {
