@@ -5,17 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
- 
-
-
-
   <title>Избранные треки</title>
 
   <style>
-
-    
-body {
+    body {
       margin: 0;
       background-color: #363E6B;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -29,7 +22,7 @@ body {
       user-select: none;
     }
 
-     .num-btn09 {
+    .num-btn09 {
       flex-shrink: 0;
       background: #fff;
       border: none;
@@ -92,8 +85,7 @@ body {
       align-items: center;
     }
 
-
-     #loading-indicator {
+    #loading-indicator {
       display: none;
       position: fixed;
       top: 50%;
@@ -133,30 +125,24 @@ body {
       text-shadow: none;
     }
 
-
-
-
-
     .tracks-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-   display: flex;
-    justify-content: space-between;
-}
-.track-container {
-  position: relative;
-}
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+    }
 
-.delete-button,.delete-button12, .delete-button217, .restore-button, .restore-button0909 {
+    .track-container {
+      position: relative;
+    }
 
-  margin-left: 10px; 
-}
-
-
+    .delete-button, .delete-button12, .delete-button217, .restore-button, .restore-button0909 {
+      margin-left: 10px;
+    }
 
     .small-button {
       align-self: flex-start;
@@ -187,26 +173,26 @@ body {
     }
 
     .small-button80 {
-    flex: 0 0 auto;      
-  width: auto;         
-  min-width: 78px;     
-  margin: 0 5px;
-  padding: 5px 8px;   
-  background: #fff;
-  color: #363E6B;
-  border: 2.5px solid #363E6B;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  line-height: 1;      
-  cursor: pointer;
-  display: flex;      
-  align-items: center;  
-  justify-content: center; 
-  box-shadow: 0 5px 18px rgba(54, 62, 107, 0.25);
-  transition: box-shadow 0.3s ease, transform 0.2s ease, color 0.3s ease, border-color 0.3s ease;
-  user-select: none;
-}
+      flex: 0 0 auto;
+      width: auto;
+      min-width: 78px;
+      margin: 0 5px;
+      padding: 5px 8px;
+      background: #fff;
+      color: #363E6B;
+      border: 2.5px solid #363E6B;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 18px rgba(54, 62, 107, 0.25);
+      transition: box-shadow 0.3s ease, transform 0.2s ease, color 0.3s ease, border-color 0.3s ease;
+      user-select: none;
+    }
 
     .small-button80:hover {
       box-shadow: 0 9px 28px rgba(54, 62, 107, 0.5);
@@ -219,7 +205,6 @@ body {
       transform: translateY(0);
       box-shadow: 0 5px 18px rgba(54, 62, 107, 0.25);
     }
-
 
     .small-button12 {
       align-self: flex-start;
@@ -297,30 +282,28 @@ body {
     }
 
     .highlight {
-    background-color: rgba(66, 153, 99, 0.7); 
-    border-left: 5px solid #2d4e2d; 
-    border-radius: 10px;
-    transition: background-color 0.5s ease, transform 0.5s ease; 
-    padding: 10px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-}
+      background-color: rgba(66, 153, 99, 0.7);
+      border-left: 5px solid #2d4e2d;
+      border-radius: 10px;
+      transition: background-color 0.5s ease, transform 0.5s ease;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
     .track-button.highlight {
-    background-color: rgba(66, 153, 99, 0.7) !important; 
-    border-left: 5px solid #2d4e2d; 
-    border-radius: 10px;
-    transition: background-color 0.5s ease, transform 0.5s ease; 
-    padding: 10px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-}
+      background-color: rgba(66, 153, 99, 0.7) !important;
+      border-left: 5px solid #2d4e2d;
+      border-radius: 10px;
+      transition: background-color 0.5s ease, transform 0.5s ease;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
 
-
-.fade-out {
-    opacity: 0; 
-    transform: scale(0.95); 
-    transition: opacity 0.5s ease, transform 0.5s ease; 
-}
-
+    .fade-out {
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
 
     #albom-container::-webkit-scrollbar-track {
       background: transparent;
@@ -338,26 +321,26 @@ body {
     }
 
     .track-button {
-  background: #363E6B;
-  border: none;
-  border-radius: 16px;
-  padding: 8px 18px;
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  text-align: left;
-  cursor: pointer;
-  box-shadow: 0 5px 18px rgba(54, 62, 107, 0.7);
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-  user-select: none;
-  width: 250px;
-  max-width: 100%;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
+      background: #363E6B;
+      border: none;
+      border-radius: 16px;
+      padding: 8px 18px;
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: left;
+      cursor: pointer;
+      box-shadow: 0 5px 18px rgba(54, 62, 107, 0.7);
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      width: 250px;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-    .restore-button0909{
+    .restore-button0909 {
       flex-shrink: 0;
       background: #7db14d;
       border-radius: 50%;
@@ -374,8 +357,8 @@ body {
       align-items: center;
     }
 
-    .restore-button{
-       flex-shrink: 0;
+    .restore-button {
+      flex-shrink: 0;
       background: #7db14d;
       border-radius: 50%;
       width: 36px;
@@ -391,11 +374,8 @@ body {
       align-items: center;
     }
 
-
-
-
     .delete-button12 {
-    flex-shrink: 0;
+      flex-shrink: 0;
       background: #c25858;
       border-radius: 50%;
       width: 30px;
@@ -405,9 +385,9 @@ body {
       color: rgb(255, 255, 255);
       font-weight: 700;
       right: 10px;
-      bottom: 10px;  
+      bottom: 10px;
+    }
 
-}
     .delete-button12:hover {
       transform: scale(1.1);
     }
@@ -459,7 +439,6 @@ body {
       transform: scale(0.95);
     }
 
-
     .delete-button217 {
       flex-shrink: 0;
       background: #c25858;
@@ -494,26 +473,22 @@ body {
     }
 
     .album-title {
-  position: relative;
-  background-color: #6570af;
-  padding: 17px 55px 17px 22px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  user-select: none;
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: white;
-  transition: background-color 0.3s ease;
-}
+      position: relative;
+      background-color: #6570af;
+      padding: 17px 55px 17px 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      user-select: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
 
-
-
-
-
-.num-btn-date {
+    .num-btn-date {
       flex-shrink: 0;
       background: #363E6B;
       border: none;
@@ -543,95 +518,99 @@ body {
       box-shadow: 0 5px 14px rgba(54, 62, 107, 0.7);
     }
 
-.album-title:hover {
-  background-color: #4a5d9e;
-}
+    .album-title:hover {
+      background-color: #4a5d9e;
+    }
 
+    .album-title .title-text {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      user-select: none;
+    }
 
-.album-title .title-text {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  user-select: none;
-}
+    .album-title .title-text::after {
+      content: '▼';
+      font-size: 0.8em;
+      margin-left: 8px;
+      color: white;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+      display: inline-block;
+      transform-origin: center;
+      transform: rotate(0deg);
+    }
 
+    .album-title[aria-expanded="true"] .title-text::after {
+      transform: rotate(180deg);
+    }
 
-.album-title .title-text::after {
-  content: '▼';
-  font-size: 0.8em;
-  margin-left: 8px;
-  color: white;
-  transition: transform 0.3s ease;
-  flex-shrink: 0;
-  display: inline-block;
-  transform-origin: center;
-  transform: rotate(0deg);
-}
+    .album-title .delete-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: none;
+      color: rgb(43, 43, 43);
+      font-weight: 700;
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: box-shadow 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      z-index: 2;
+    }
 
-.album-title[aria-expanded="true"] .title-text::after {
-  transform: rotate(180deg);
-}
+    .album-title .delete-button:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
 
+    .album-title .delete-button:active {
+      transform: translateY(-50%) scale(0.95);
+    }
 
-.album-title .delete-button {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: #ffffff;
-  border: none;
-  color: rgb(43, 43, 43);
-  font-weight: 700;
-  font-size: 1.3rem;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: box-shadow 0.3s ease, transform 0.2s ease;
-  user-select: none;
-  z-index: 2;
-}
+    .searchL {
+      margin-bottom: 20px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
 
-.album-title .delete-button:hover {
-  transform: translateY(-50%) scale(1.1);
-}
+    .searchL input[type="text"] {
+      width: 100%;
+      max-width: 600px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2.5px solid #6570af;
+      border-radius: 16px;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #363E6B;
+      box-sizing: border-box;
+    }
 
-.album-title .delete-button:active {
-  transform: translateY(-50%) scale(0.95);
-}
+    .searchL input[type="text"]::placeholder {
+      color: #999;
+    }
 
-.searchL {
-  margin-bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+    .searchL input[type="text"]:focus {
+      border-color: #4a5d9e;
+      box-shadow: 0 0 8px rgba(74, 93, 158, 0.6);
+    }
 
-.searchL input[type="text"] {
-  width: 100%;
-  max-width: 600px;
-  padding: 12px 16px;
-  font-size: 1rem;
-  border: 2.5px solid #6570af;
-  border-radius: 16px;
-  outline: none;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #363E6B;
-  box-sizing: border-box;
-}
-
-.searchL input[type="text"]::placeholder {
-  color: #999;
-}
-
-.searchL input[type="text"]:focus {
-  border-color: #4a5d9e;
-  box-shadow: 0 0 8px rgba(74, 93, 158, 0.6);
-}
+    .header-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
 
     @media (max-width: 640px) {
       #playlist-container {
@@ -665,20 +644,28 @@ body {
       #audio-player {
         height: 40px;
       }
+
+      .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
     }
-</style>
+  </style>
 </head>
 
 <body>
   <section id="playlist-container" aria-label="Плейлист избранных треков">
-    <h3>Избранные треки</h3>
-    <button id="recache-btn" style="padding: 10px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">🔄</button>
-    <button class="small-button" onclick="location.href='cash.html'" aria-label="Перейти в меню">Меню</button> 
+    <div class="header-container">
+      <h3>Избранные треки</h3>
+      <button id="recache-btn" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">🔄</button>
+    </div>
+    <button class="small-button" onclick="location.href='cash.html'" aria-label="Перейти в меню">Меню</button>
 
-    <form action="search" method="get" class="searchL">  
-    <input type="text" name="query" placeholder="Поиск песен..."> 
-    </form>  
-      <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <form action="search" method="get" class="searchL">
+      <input type="text" name="query" placeholder="Поиск песен...">
+    </form>
+    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
       <button id="sort-button" class="small-button80" aria-label="Сортировать по названию">А-Я</button>
       <button id="sort-button-baze" class="small-button80" aria-label="Сортировать по названию">Перемешать</button>
       <button id="sort-button-data" class="small-button80" aria-label="Сортировать по датам">Дата</button>
@@ -690,12 +677,9 @@ body {
 
   <div id="loading-indicator">
     <p>Подгружаем безинтернетное прослушивание.</p>
-    <h1>Не выключайте интернет</h1>
   </div>
 
-  
-
-  
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
