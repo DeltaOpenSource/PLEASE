@@ -1182,6 +1182,15 @@ document.getElementById('recache-btn').addEventListener('click', () => {
 });
 
 
+navigator.serviceWorker.addEventListener('message', (event) => {
+  if (event.data && event.data.status === 'recache-complete') {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    loadingIndicator.style.display = 'none';
+    console.log('Кэширование завершено. Индикатор скрыт.');
+  }
+});
+
+
 
 
 
