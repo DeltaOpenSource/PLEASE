@@ -231,6 +231,7 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
         try {
           await cache.add(url);
           cachedCount++;
+          port.postMessage({ action: 'progress', value: cachedCount });
 
 
 
@@ -242,6 +243,7 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
       })
     );
   }
+  port.postMessage({ action: 'recache-done' });
   console.log(`Кэширование завершено: ${cachedCount} из ${urls.length} файлов.`);
 }
 
@@ -299,15 +301,18 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('message', (event) => {
   if (event.data && event.data.action === 'recache') {
     console.log('[SW] Перезапуск кэширования...');
+    port.postMessage({ action: 'recache-done' });
     caches.open(CACHE_NAME)
       .then((cache) => {
         const filteredUrls = urlsToCache.filter(url => !url.startsWith('/Obmen/'));
         return cacheUrlsInBatches(cache, filteredUrls, 10);
       })
       .then(() => {
+        
         console.log('[SW] Кэширование завершено повторно.');
       })
       .catch((error) => {
+        port.postMessage({ action: 'recache-done' });
         console.error('[SW] Ошибка при повторном кэшировании:', error);
       });
   }
