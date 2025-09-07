@@ -656,11 +656,14 @@
 
 <body>
   <section id="playlist-container" aria-label="Плейлист избранных треков">
-    <div class="header-container">
       <h3>Избранные треки</h3>
+
+    <div class="header-container">
       <button id="recache-btn" style="padding: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">🔄</button>
+      <button class="small-button" onclick="location.href='cash.html'" aria-label="Перейти в меню">Меню</button>
     </div>
-    <button class="small-button" onclick="location.href='cash.html'" aria-label="Перейти в меню">Меню</button>
+    
+    
 
     <form action="search" method="get" class="searchL">
       <input type="text" name="query" placeholder="Поиск песен...">
