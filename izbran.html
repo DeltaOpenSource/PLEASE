@@ -672,6 +672,7 @@ body {
 <body>
   <section id="playlist-container" aria-label="Плейлист избранных треков">
     <h3>Избранные треки</h3>
+    <button id="recache-btn" style="padding: 10px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">🔄</button>
     <button class="small-button" onclick="location.href='cash.html'" aria-label="Перейти в меню">Меню</button> 
 
     <form action="search" method="get" class="searchL">  
@@ -688,11 +689,11 @@ body {
   </section>
 
   <div id="loading-indicator">
-    <p>Загрузка файлов в кэш...</p>
-    <progress id="progress-bar" value="0" max="300"></progress>
+    <p>Подгружаем безинтернетное прослушивание.</p>
+    <h1>Не выключайте интернет</h1>
   </div>
 
-  <button id="recache-btn" style="padding: 10px; margin: 10px; background: #007bff; color: white; border: none; border-radius: 5px;">🔄</button>
+  
 
   
 <script src="script.js"></script>
