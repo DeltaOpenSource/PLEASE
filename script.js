@@ -1170,6 +1170,7 @@ if ('serviceWorker' in navigator) {
   });
 } else {
    alert('не потдерживается SW')
+   UpdateFunction()
 }
 
 document.getElementById('recache-btn').addEventListener('click', () => {
