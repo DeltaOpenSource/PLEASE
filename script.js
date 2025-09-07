@@ -1164,6 +1164,11 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
         alert('SW зарегистрирован:', registration);
+
+         if (!localStorage.getItem('cacheLoaded')) {
+          showLoadingIndicator();
+        }
+         
       })
       .catch((error) => {
         console.log('Ошибка регистрации SW:', error);
@@ -1172,6 +1177,27 @@ if ('serviceWorker' in navigator) {
 } else {
    alert('не потдерживается SW')
 }
+
+function showLoadingIndicator() {
+  const indicator = document.getElementById('loading-indicator');
+  indicator.style.display = 'block';
+}
+
+
+function hideLoadingIndicator() {
+  const indicator = document.getElementById('loading-indicator');
+  indicator.style.display = 'none';
+  localStorage.setItem('cacheLoaded', 'true'); 
+}
+
+navigator.serviceWorker.addEventListener('message', (event) => {
+  if (event.data.type === 'cache-progress') {
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.value = (event.data.cached / event.data.total) * 100;
+  } else if (event.data.type === 'cache-complete') {
+    hideLoadingIndicator();
+  }
+});
 
 
 
