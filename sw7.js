@@ -231,13 +231,28 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
         try {
           await cache.add(url);
           cachedCount++;
+
+
+          
+          const clients = await self.clients.matchAll();
+          clients.forEach(client => client.postMessage({
+            type: 'cache-progress',
+            cached: cachedCount,
+            total: urls.length
+          }));
+
+          
           console.log(`Успешно закэширован (${cachedCount}/${urls.length}): ${url}`);
         } catch (error) {
+          const clients = await self.clients.matchAll();
+          clients.forEach(client => client.postMessage({ type: 'cache-error' }));
           console.error(`Ошибка при кэшировании ${url}:`, error);
         }
       })
     );
   }
+  const clients = await self.clients.matchAll();
+  clients.forEach(client => client.postMessage({ type: 'cache-complete' }));
   console.log(`Кэширование завершено: ${cachedCount} из ${urls.length} файлов.`);
 }
 
