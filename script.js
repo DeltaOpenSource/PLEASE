@@ -1164,7 +1164,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
 
-         if (!localStorage.getItem('cacheLoaded') === "нет") {
+         if (localStorage.getItem('cacheLoaded') !== "нет") {
           showLoadingIndicator();
         }
          
