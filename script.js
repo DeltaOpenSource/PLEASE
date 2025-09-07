@@ -1164,7 +1164,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw7.js') 
       .then((registration) => {
 
-         if (localStorage.getItem('cacheLoaded') !== "нет") {
+         if (!localStorage.getItem('cacheLoaded')) {
           showLoadingIndicator();
         }
          
@@ -1183,11 +1183,12 @@ function showLoadingIndicator() {
 }
 
 
-function hideLoadingIndicator() {
-  const indicator = document.getElementById('loading-indicator');
-  indicator.style.display = 'none';
-  localStorage.setItem('cacheLoaded', 'нет'); 
+ function hideLoadingIndicator() {
+  console.log('Скрываем индикатор и сохраняем cacheLoaded');
+  document.getElementById('loading-indicator').style.display = 'none';
+  localStorage.setItem('cacheLoaded', 'true');
 }
+
 
 navigator.serviceWorker.addEventListener('message', (event) => {
   if (event.data.type === 'cache-progress') {
