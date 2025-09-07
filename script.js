@@ -1203,7 +1203,7 @@ function hideLoadingIndicator() {
 navigator.serviceWorker.addEventListener('message', (event) => {
   if (event.data.type === 'cache-progress') {
     const progressBar = document.getElementById('progress-bar');
-    progressBar.value = (event.data.cached / event.data.total) * 100;
+    progressBar.value += 1;
   } else if (event.data.type === 'cache-complete') {
     hideLoadingIndicator();
   }
