@@ -231,7 +231,6 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
         try {
           await cache.add(url);
           cachedCount++;
-          port.postMessage({ action: 'progress', value: cachedCount });
 
 
 
@@ -243,7 +242,6 @@ async function cacheUrlsInBatches(cache, urls, batchSize = 10) {
       })
     );
   }
-  port.postMessage({ action: 'recache-done' });
   console.log(`Кэширование завершено: ${cachedCount} из ${urls.length} файлов.`);
 }
 
