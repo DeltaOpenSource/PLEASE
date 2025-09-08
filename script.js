@@ -1162,11 +1162,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw7.js').then(registration => {
       console.log('SW зарегистрирован');
-      if (!navigator.serviceWorker.controller) {
-        window.location.reload();
-      } else {
-        UpdateFunction();
-      }
     }).catch(error => {
       console.error('Ошибка регистрации SW:', error);
       UpdateFunction(); 
