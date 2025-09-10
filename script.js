@@ -1157,17 +1157,7 @@ let tracks = [
   }
 ];
 
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw7.js').then(registration => {
-      console.log('SW зарегистрирован');
-    }).catch(error => {
-      console.error('Ошибка регистрации SW:', error);
-      UpdateFunction(); 
-    });
-  });
-} else {
+{
   console.log('SW не поддерживается');
    let db;
   const DB_NAME = 'AudioCacheDB';
@@ -1283,6 +1273,73 @@ let currentHighlightedElement = null;
 
 
 
+let db;
+  const DB_NAME = 'AudioCacheDB';
+  const STORE_NAME = 'audioFiles';
+  const DB_VERSION = 1;
+
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        db = request.result;
+        resolve(db);
+      };
+      request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          const store = db.createObjectStore(STORE_NAME, { keyPath: 'url' });
+          store.createIndex('url', 'url', { unique: true });
+        }
+      };
+    });
+  }
+
+  async function cacheAudioFile(url) {
+    try {
+      await initDB();
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const arrayBuffer = await response.arrayBuffer();
+
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      await new Promise((resolve, reject) => {
+        const request = store.put({ url, data: arrayBuffer });
+        request.onsuccess = resolve;
+        request.onerror = () => reject(request.error);
+      });
+
+      console.log(`Файл ${url} успешно закэширован в IndexedDB`);
+    } catch (error) {
+      console.error(`Ошибка кэширования ${url}:`, error);
+    }
+  }
+
+  async function getAudioFile(url) {
+    try {
+      await initDB();
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const result = await new Promise((resolve, reject) => {
+        const request = store.get(url);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      if (result && result.data) {
+        const blob = new Blob([result.data], { type: 'audio/mpeg' });
+        const blobUrl = URL.createObjectURL(blob);
+        return blobUrl;
+      } else {
+        return url;
+      }
+    } catch (error) {
+      console.error(`Ошибка получения файла ${url}:`, error);
+      return url; 
+    }
+  }
 
 
   const originalPlayTrack = playTrack;
@@ -1320,17 +1377,14 @@ let currentHighlightedElement = null;
     }
   };
 
-let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
 
-
- function playAlbomTrack(albumIndex, trackIndex) {
+  const originalPlayAlbomTrack = playAlbomTrack;
+  playAlbomTrack = async function(albumIndex, trackIndex) {
     const album = albomsBaze[albumIndex];
-
     if (!album || !album.album) {
         console.error("Альбом не найден или не содержит треков.");
         return;
     }
-
     let trackList = album.album;
     if (peremesh && shuffledAlbumTracks[album.title]) {
         trackList = shuffledAlbumTracks[album.title];
@@ -1339,36 +1393,32 @@ let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
     } else if (isSortedByDate) {
         trackList = [...album.album].sort((a, b) => new Date(b.titleDate) - new Date(a.titleDate));
     }
-
     let track = trackList[trackIndex];
-
     const disabledTitlesRaw = localStorage.getItem('disabled') || '';
     const disabledTitles = disabledTitlesRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-
     while (track && disabledTitles.map(title => title.toLowerCase()).includes(track.title.toLowerCase())) {
         trackIndex++;
-
         if (trackIndex >= trackList.length) {
             trackIndex = 0; 
         }
-
         track = trackList[trackIndex];
     }
-
     if (track) {
         if (currentHighlightedElement) {
             currentHighlightedElement.classList.remove('highlight');
         }
-
         currentTrackIndex = { albumIndex, trackIndex };
-        audioPlayer.src = track.url;
-        audioPlayer.play().catch(error => {
-            console.error("Ошибка воспроизведения:", error);
-        });
+
+        try {
+          const playableUrl = await getAudioFile(track.url);
+          audioPlayer.src = playableUrl;
+          await audioPlayer.play();
+        } catch (error) {
+          console.error("Ошибка воспроизведения:", error);
+        }
 
         const albumElements = Array.from(albomContainer.querySelectorAll('.album-title'));
         let albumElement = null;
-        
         for (let i = 0; i < albumElements.length; i++) {
             const titleElement = albumElements[i].querySelector('.title-text');
             if (titleElement && titleElement.textContent === album.title) {
@@ -1376,24 +1426,19 @@ let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
                 break;
             }
         }
-
         if (albumElement) {
-
             const tracksContainer = albumElement.nextElementSibling;
             if (tracksContainer && (tracksContainer.style.maxHeight === '0px' || tracksContainer.style.maxHeight === '')) {
                 albumElement.click();
             }
-
             const trackButtons = Array.from(tracksContainer.querySelectorAll('.track-button'));
             let trackButton = null;
-            
             for (let i = 0; i < trackButtons.length; i++) {
                 if (trackButtons[i].textContent === track.title) {
                     trackButton = trackButtons[i];
                     break;
                 }
             }
-
             if (trackButton) {
                 trackButton.classList.add('highlight');
                 currentHighlightedElement = trackButton;
@@ -1403,7 +1448,7 @@ let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
     } else {
         console.error("Трек не найден для воспроизведения.");
     }
-}
+  };
 
 
 
