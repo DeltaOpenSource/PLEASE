@@ -1169,7 +1169,79 @@ if ('serviceWorker' in navigator) {
   });
 } else {
   console.log('SW не поддерживается');
-  UpdateFunction(); 
+   let db;
+  const DB_NAME = 'AudioCacheDB';
+  const STORE_NAME = 'audioFiles';
+  const DB_VERSION = 1;
+
+  function initDB() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      
+      request.onerror = () => reject(request.error);
+      request.onsuccess = () => {
+        db = request.result;
+        resolve(db);
+      };
+      
+      request.onupgradeneeded = (event) => {
+        db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          const store = db.createObjectStore(STORE_NAME, { keyPath: 'url' });
+          store.createIndex('url', 'url', { unique: true });
+        }
+      };
+    });
+  }
+
+
+  async function cacheAudioFile(url) {
+    try {
+      await initDB();
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const arrayBuffer = await response.arrayBuffer();
+
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      await new Promise((resolve, reject) => {
+        const request = store.put({ url, data: arrayBuffer });
+        request.onsuccess = resolve;
+        request.onerror = () => reject(request.error);
+      });
+
+      console.log(`Файл ${url} успешно закэширован в IndexedDB`);
+    } catch (error) {
+      console.error(`Ошибка кэширования ${url}:`, error);
+    }
+  }
+
+
+  async function getAudioFile(url) {
+    try {
+      await initDB();
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const result = await new Promise((resolve, reject) => {
+        const request = store.get(url);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      });
+
+      if (result && result.data) {
+
+        const blob = new Blob([result.data], { type: 'audio/mpeg' });
+        const blobUrl = URL.createObjectURL(blob);
+        return blobUrl;
+      } else {
+
+        return url;
+      }
+    } catch (error) {
+      console.error(`Ошибка получения файла ${url}:`, error);
+      return url; 
+    }
+  }
 }
 
 
@@ -1213,52 +1285,40 @@ let currentHighlightedElement = null;
 
 
 
-function playTrack(index) {
-
-
-
-   
-
-  if (currentHighlightedElement) {
-        currentHighlightedElement.classList.remove('highlight');
+  const originalPlayTrack = playTrack;
+  playTrack = async function(index) {
+    if (currentHighlightedElement) {
+      currentHighlightedElement.classList.remove('highlight');
     }
 
+    AboutTrackIndex = index;
+    const track = tracks[index];
 
-    
-
-
-
-
-        AboutTrackIndex = index;
-        const track = tracks[index];
-       audioPlayer.src = track.url;
-
-        audioPlayer.play().catch(error => {
-        console.error("Ошибка воспроизведения:", error);
-        if (error.name === 'NotAllowedError') {
-            console.log('Автопроигрывание заблокировано браузером. Нажмите на плеер для воспроизведения.');
-        }
-    });
-
-        if (peremesh && shuffledFavorites.length > 0) {
-            const currentTitle = track.title;
-            currentShuffledIndex = shuffledFavorites.indexOf(currentTitle);
-        }
-
-        currentTrackIndex = { albumIndex: -1, trackIndex: index }
-
-        const trackElements = Array.from(favoritesContainer.children);
-        const currentTrackElement = trackElements.find(el => 
-            el.querySelector('.track-button').textContent === track.title
-        );
-
-        if (currentTrackElement) {
-          currentTrackElement.classList.add('highlight');
-          currentHighlightedElement = currentTrackElement;
-        }
-
+    try {
+      const playableUrl = await getAudioFile(track.url);
+      audioPlayer.src = playableUrl;
+      await audioPlayer.play();
+    } catch (error) {
+      console.error("Ошибка воспроизведения:", error);
+      if (error.name === 'NotAllowedError') {
+        console.log('Автопроигрывание заблокировано браузером. Нажмите на плеер для воспроизведения.');
+      }
     }
 
+    if (peremesh && shuffledFavorites.length > 0) {
+      const currentTitle = track.title;
+      currentShuffledIndex = shuffledFavorites.indexOf(currentTitle);
+    }
+    currentTrackIndex = { albumIndex: -1, trackIndex: index };
+    const trackElements = Array.from(favoritesContainer.children);
+    const currentTrackElement = trackElements.find(el => 
+      el.querySelector('.track-button').textContent === track.title
+    );
+    if (currentTrackElement) {
+      currentTrackElement.classList.add('highlight');
+      currentHighlightedElement = currentTrackElement;
+    }
+  };
 
 let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
 
@@ -3239,6 +3299,5 @@ const themeToggle = document.getElementById('theme-toggle');
   }
 
   themeToggle.addEventListener('click', theme)
-
 
 
