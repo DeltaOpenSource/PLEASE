@@ -1,4 +1,4 @@
-const CACHE_NAME = 'music-player-cache-v25';
+const CACHE_NAME = 'music-player-cache-v27';
 const urlsToCache = [
 
   "https://nextjs-boilerplate-i6pd.vercel.app/Русская душа - Богеме Ивлеевой (5).mp3",
@@ -253,10 +253,10 @@ self.addEventListener('install', (event) => {
       
 
       await cache.addAll([
-        "/Year/izbran.html",
-        "/Year/index.html",
-        "/Year/cash.html",
-        "/Year/script.js",
+        "/PLEASE/izbran.html",
+        "/PLEASE/index.html",
+        "/PLEASE/cash.html",
+        "/PLEASE/script.js",
       ]);
       
 
