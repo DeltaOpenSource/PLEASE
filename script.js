@@ -1158,37 +1158,103 @@ let tracks = [
 ];
 
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw7.js').then(registration => {
-      console.log('SW зарегистрирован');
-    }).catch(error => {
-      console.error('Ошибка регистрации SW:', error);
-      UpdateFunction(); 
-    });
-  });
-} else {
-  console.log('SW не поддерживается');
-  UpdateFunction(); 
+
+
+const CACHE_NAME = 'audio-cache-v1';
+
+
+async function cacheAudioFile(url) {
+    try {
+        const cache = await caches.open(CACHE_NAME);
+        const response = await fetch(url);
+        if (response.ok) {
+            await cache.put(url, response.clone());
+            console.log(`Файл закэширован: ${url}`);
+            return true;
+        } else {
+            console.warn(`Не удалось получить файл для кэширования: ${url}`);
+            return false;
+        }
+    } catch (error) {
+        console.error(`Ошибка при кэшировании файла ${url}:`, error);
+        return false;
+    }
+}
+
+
+async function getAudioFile(url) {
+    try {
+        const cache = await caches.open(CACHE_NAME);
+        let cachedResponse = await cache.match(url);
+
+        if (cachedResponse) {
+            console.log(`Файл получен из кэша: ${url}`);
+            return cachedResponse;
+        } else {
+            console.log(`Файл не найден в кэше, загружаем из сети: ${url}`);
+            const networkResponse = await fetch(url);
+            if (networkResponse.ok) {
+                return networkResponse;
+            } else {
+                throw new Error(`Сеть ответила с ошибкой: ${networkResponse.status}`);
+            }
+        }
+    } catch (error) {
+        console.error(`Ошибка при получении файла ${url}:`, error);
+        throw error;
+    }
+}
+
+async function manuallyRecacheAll() {
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const progressBar = document.getElementById('progress-bar');
+    loadingIndicator.style.display = 'block';
+
+    try {
+
+        const favoriteTitlesRaw = localStorage.getItem('trek') || '';
+        const favoriteTitles = favoriteTitlesRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+        const favoriteTracks = favoriteTitles
+            .map(title => tracks.find(t => t.title === title))
+            .filter(t => t && t.url);
+
+ 
+        const albomTitlesRaw = localStorage.getItem('trekA') || '';
+        const AlbomTitles = albomTitlesRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+        const allAlbumTracks = [];
+        AlbomTitles.forEach(albomTitle => {
+            const album = albomsBaze.find(a => a.title === albomTitle);
+            if (album && album.album) {
+                allAlbumTracks.push(...album.album);
+            }
+        });
+
+
+        const allUrls = [
+            ...favoriteTracks.map(t => t.url),
+            ...allAlbumTracks.map(t => t.url)
+        ];
+
+
+        for (let i = 0; i < allUrls.length; i++) {
+            await cacheAudioFile(allUrls[i]);
+
+            if (progressBar) {
+                progressBar.style.width = `${((i + 1) / allUrls.length) * 100}%`;
+            }
+        }
+
+        console.log('Ручное кэширование завершено.');
+    } catch (error) {
+        console.error('Ошибка при ручном кэшировании:', error);
+    } finally {
+        loadingIndicator.style.display = 'none';
+    }
 }
 
 
 document.getElementById('recache-btn').addEventListener('click', () => {
-
-  const loadingIndicator = document.getElementById('loading-indicator');
-  const progressBar = document.getElementById('progress-bar');
-  loadingIndicator.style.display = 'block';
-
-  navigator.serviceWorker.controller.postMessage({ action: 'recache' });
-});
-
-
-navigator.serviceWorker.addEventListener('message', (event) => {
-  if (event.data && event.data.status === 'recache-complete') {
-    const loadingIndicator = document.getElementById('loading-indicator');
-    loadingIndicator.style.display = 'none';
-    console.log('Кэширование завершено. Индикатор скрыт.');
-  }
+    manuallyRecacheAll();
 });
 
 
@@ -1213,64 +1279,54 @@ let currentHighlightedElement = null;
 
 
 
-function playTrack(index) {
-
-
-
-   
-
+async function playTrack(index) {
   if (currentHighlightedElement) {
         currentHighlightedElement.classList.remove('highlight');
     }
-
-
-    
-
-
-
-
         AboutTrackIndex = index;
         const track = tracks[index];
-       audioPlayer.src = track.url;
 
-        audioPlayer.play().catch(error => {
-        console.error("Ошибка воспроизведения:", error);
-        if (error.name === 'NotAllowedError') {
-            console.log('Автопроигрывание заблокировано браузером. Нажмите на плеер для воспроизведения.');
+        try {
+
+            const audioResponse = await getAudioFile(track.url);
+            const audioBlob = await audioResponse.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+
+            audioPlayer.src = audioUrl;
+            await audioPlayer.play();
+        } catch (error) {
+            console.error("Ошибка воспроизведения:", error);
+            if (error.name === 'NotAllowedError') {
+                console.log('Автопроигрывание заблокировано браузером. Нажмите на плеер для воспроизведения.');
+            }
         }
-    });
 
         if (peremesh && shuffledFavorites.length > 0) {
             const currentTitle = track.title;
             currentShuffledIndex = shuffledFavorites.indexOf(currentTitle);
         }
-
         currentTrackIndex = { albumIndex: -1, trackIndex: index }
-
         const trackElements = Array.from(favoritesContainer.children);
         const currentTrackElement = trackElements.find(el => 
             el.querySelector('.track-button').textContent === track.title
         );
-
         if (currentTrackElement) {
           currentTrackElement.classList.add('highlight');
           currentHighlightedElement = currentTrackElement;
         }
-
     }
 
 
 let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
 
 
- function playAlbomTrack(albumIndex, trackIndex) {
+async function playAlbomTrack(albumIndex, trackIndex) {
     const album = albomsBaze[albumIndex];
-
     if (!album || !album.album) {
         console.error("Альбом не найден или не содержит треков.");
         return;
     }
-
     let trackList = album.album;
     if (peremesh && shuffledAlbumTracks[album.title]) {
         trackList = shuffledAlbumTracks[album.title];
@@ -1279,36 +1335,35 @@ let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
     } else if (isSortedByDate) {
         trackList = [...album.album].sort((a, b) => new Date(b.titleDate) - new Date(a.titleDate));
     }
-
     let track = trackList[trackIndex];
-
     const disabledTitlesRaw = localStorage.getItem('disabled') || '';
     const disabledTitles = disabledTitlesRaw.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-
     while (track && disabledTitles.map(title => title.toLowerCase()).includes(track.title.toLowerCase())) {
         trackIndex++;
-
         if (trackIndex >= trackList.length) {
             trackIndex = 0; 
         }
-
         track = trackList[trackIndex];
     }
-
     if (track) {
         if (currentHighlightedElement) {
             currentHighlightedElement.classList.remove('highlight');
         }
-
         currentTrackIndex = { albumIndex, trackIndex };
-        audioPlayer.src = track.url;
-        audioPlayer.play().catch(error => {
+
+        try {
+            const audioResponse = await getAudioFile(track.url);
+            const audioBlob = await audioResponse.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+
+            audioPlayer.src = audioUrl;
+            await audioPlayer.play();
+        } catch (error) {
             console.error("Ошибка воспроизведения:", error);
-        });
+        }
 
         const albumElements = Array.from(albomContainer.querySelectorAll('.album-title'));
         let albumElement = null;
-        
         for (let i = 0; i < albumElements.length; i++) {
             const titleElement = albumElements[i].querySelector('.title-text');
             if (titleElement && titleElement.textContent === album.title) {
@@ -1316,24 +1371,19 @@ let currentTrackIndex = { albumIndex: -1, trackIndex: -1 };
                 break;
             }
         }
-
         if (albumElement) {
-
             const tracksContainer = albumElement.nextElementSibling;
             if (tracksContainer && (tracksContainer.style.maxHeight === '0px' || tracksContainer.style.maxHeight === '')) {
                 albumElement.click();
             }
-
             const trackButtons = Array.from(tracksContainer.querySelectorAll('.track-button'));
             let trackButton = null;
-            
             for (let i = 0; i < trackButtons.length; i++) {
                 if (trackButtons[i].textContent === track.title) {
                     trackButton = trackButtons[i];
                     break;
                 }
             }
-
             if (trackButton) {
                 trackButton.classList.add('highlight');
                 currentHighlightedElement = trackButton;
