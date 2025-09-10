@@ -3145,6 +3145,7 @@ document.getElementById('sort-button-baze').addEventListener('click', () => {
 
 window.addEventListener('load', function() {
     UpdateFunction();
+   manuallyRecacheAll();
 });
 
 
