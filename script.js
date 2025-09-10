@@ -1244,11 +1244,11 @@ async function manuallyRecacheAll() {
             }
         }
 
-       await cacheAudioFile(window.location.origin + '/');
-        await cacheAudioFile(window.location.origin + '/script.js'); 
-        await cacheAudioFile(window.location.origin + '/izbran.html'); 
-       await cacheAudioFile(window.location.origin + '/cash.html'); 
-       await cacheAudioFile(window.location.origin + '/albom.html'); 
+       await cacheAudioFile(window.location.origin + '/PLEASE/');
+        await cacheAudioFile(window.location.origin + '/PLEASE/script.js'); 
+        await cacheAudioFile(window.location.origin + '/PLEASE/izbran.html'); 
+       await cacheAudioFile(window.location.origin + '/PLEASE/cash.html'); 
+       await cacheAudioFile(window.location.origin + '/PLEASE/albom.html'); 
 
         console.log('Ручное кэширование завершено.');
     } catch (error) {
